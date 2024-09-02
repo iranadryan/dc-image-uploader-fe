@@ -1,6 +1,8 @@
 import { toast } from 'react-toastify'
-import checkCircle from '../assets/check-circle.svg'
 import { UploadedFile } from '../services/UploadService'
+import { IconShare } from './icons/IconShare'
+import { IconDownload } from './icons/IconDownload'
+import axios from 'axios'
 
 interface SuccessStepProps {
   uploadedFile: UploadedFile
@@ -12,33 +14,46 @@ export function SuccessStep({ uploadedFile }: SuccessStepProps) {
     toast.success('Link coppied to clipboard')
   }
 
+  async function handleDownload() {
+    const { data } = await axios.get(uploadedFile.filePath, {
+      responseType: 'blob',
+    })
+
+    const url = window.URL.createObjectURL(new Blob([data]))
+    const link = document.createElement('a')
+    link.href = url
+    link.download = uploadedFile.fileName
+    document.body.appendChild(link)
+
+    link.click()
+
+    document.body.removeChild(link)
+    window.URL.revokeObjectURL(url)
+  }
+
   return (
     <>
-      <img className="mx-auto" src={checkCircle} alt="check circle" />
-      <h1 className="mt-3 text-center text-lg font-medium tracking-tight text-neutral-900">
-        Upload Successfully!
-      </h1>
-
-      <img
-        src={uploadedFile.filePath}
-        alt="Uploaded image"
-        className="mt-8 h-60 w-full rounded-lg object-cover"
-      />
-
-      <div className="mt-8 flex h-12.5 items-center gap-2 rounded-lg border border-blue-300 bg-blue-50 py-1 pl-4 pr-1">
-        <a
-          href={uploadedFile.filePath}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex-1 truncate text-xs text-neutral-900"
-        >
-          {uploadedFile.filePath}
-        </a>
+      <div className="h-[334px] w-full max-w-xl rounded-lg bg-white p-2 shadow-main transition-all dark:bg-neutral-800">
+        <img
+          src={uploadedFile.filePath}
+          alt="Uploaded image"
+          className="h-full w-full rounded-md object-cover"
+        />
+      </div>
+      <div className="mt-6 flex gap-2">
         <button
           onClick={handleCopyToClipboard}
-          className="h-full rounded-md bg-blue-500 px-4 text-xs font-semibold tracking-tight text-white transition-all hover:brightness-110"
+          className="flex h-8 items-center justify-center gap-1 rounded-md bg-blue-500 px-3 text-xs font-semibold text-neutral-50"
         >
-          Copy Link
+          <IconShare />
+          Share
+        </button>
+        <button
+          onClick={handleDownload}
+          className="flex h-8 items-center justify-center gap-1 rounded-md bg-blue-500 px-3 text-xs font-semibold text-neutral-50"
+        >
+          <IconDownload />
+          Download
         </button>
       </div>
     </>

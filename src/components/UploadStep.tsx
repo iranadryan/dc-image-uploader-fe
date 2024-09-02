@@ -1,7 +1,7 @@
 import { useCallback } from 'react'
-import imagePlaceholder from '../assets/image.svg'
 import { FileRejection, useDropzone } from 'react-dropzone'
 import { toast } from 'react-toastify'
+import { IconUpload } from './icons/IconUpload'
 
 interface UploadStepProps {
   onUpload: (file: File) => void
@@ -23,51 +23,37 @@ export function UploadStep({ onUpload }: UploadStepProps) {
     toast.error('Invalid file, please use an image')
   }, [])
 
-  const { getRootProps, getInputProps, open, isDragActive } = useDropzone({
+  const { getRootProps, getInputProps, open } = useDropzone({
     onDropAccepted,
     onDropRejected,
     multiple: false,
     noClick: true,
     maxFiles: 1,
     accept: {
-      'image/png': ['.png'],
       'image/jpeg': ['.jpeg', '.jpg'],
+      'image/png': ['.png'],
+      'image/gif': ['.gif'],
     },
   })
 
   return (
-    <>
-      <h1 className="text-center text-lg font-medium tracking-tight text-neutral-900">
-        Upload Your Image
-      </h1>
-
-      <p className="mt-4 text-center text-sm tracking-tight text-neutral-800">
-        File should be jpg, jpeg or png
-      </p>
-
-      <section className="mt-8 flex flex-col items-center">
-        <div
-          className="flex h-56 flex-col items-center justify-center gap-4 self-stretch rounded-lg border border-dashed border-blue-300 bg-blue-50"
-          {...getRootProps()}
-        >
-          <input {...getInputProps()} />
-          <img src={imagePlaceholder} alt="Image placeholder" />
-          <span className="text-sm tracking-tight text-neutral-700">
-            {isDragActive ? 'Drop your file' : 'Drag & Drop your image here'}
-          </span>
-        </div>
-
-        <p className="my-3 text-center text-xs font-medium tracking-tight text-neutral-700">
-          Or
+    <div className="h-[334px] w-full max-w-xl rounded-lg bg-white p-2 shadow-main transition-all dark:bg-neutral-800">
+      <div
+        className="flex h-full w-full flex-col items-center justify-center rounded-md border border-dashed border-neutral-100 transition-all dark:border-neutral-700"
+        {...getRootProps()}
+      >
+        <input {...getInputProps()} />
+        <IconUpload />
+        <strong className="mt-5 text-sm font-medium leading-tight tracking-tight text-neutral-950 transition-all dark:text-neutral-50/80">
+          Drag & drop a file or{' '}
+          <button onClick={open} className="text-blue-500">
+            browse files
+          </button>
+        </strong>
+        <p className="mt-2 text-xs font-light leading-tight tracking-tight text-neutral-950 transition-all dark:text-neutral-50/80">
+          JPG, PNG or GIF - Max file size 2MB
         </p>
-
-        <button
-          onClick={open}
-          className="h-10.5 rounded-lg bg-blue-500 px-4 text-sm font-semibold tracking-tight text-white transition-all hover:brightness-110"
-        >
-          Choose a file
-        </button>
-      </section>
-    </>
+      </div>
+    </div>
   )
 }

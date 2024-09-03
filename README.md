@@ -1,6 +1,6 @@
 <!-- Please update value in the {}  -->
 
-<h1 align="center">Simple Image Uploaded</h1>
+<h1 align="center">Simple Image Uploader</h1>
 
 <div align="center">
   <h3>
